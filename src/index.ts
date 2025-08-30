@@ -60,7 +60,11 @@ function artistToArtist(artist: any): Artist {
   return {
     apiId: artist.id,
     name: artist.attributes.name,
-    images: []
+    images: artist.attributes.artwork ? [{
+      url: artist.attributes.artwork.url.replace('{w}', '300').replace('{h}', '300'),
+      width: 300,
+      height: 300
+    }] : []
   };
 }
 
@@ -102,7 +106,6 @@ class AppleMusicPlayer {
           }
         });
 
-        console.log("musicKit", musicKit);
         musicKit.addEventListener('playbackStateDidChange', (event: any) => {
           this.handlePlaybackStateChange(event);
         });
@@ -300,7 +303,6 @@ async function getAlbumTracks(request: AlbumTrackRequest): Promise<AlbumTracksRe
   
   const result = await musicKit.api.music(`/v1/catalog/{{storefrontId}}/albums/${request.apiId}`, queryParameters);
   const album = result.data.data[0];
-  console.log("album", album);
   const tracks = album.relationships.tracks.data.map(songToTrack);
 
   return {
@@ -320,7 +322,6 @@ async function getArtistAlbums(request: ArtistAlbumRequest): Promise<ArtistAlbum
   
   const result = await musicKit.api.music(`/v1/catalog/{{storefrontId}}/artists/${request.apiId}`, queryParameters);
   const artist = result.data.data[0];
-  console.log("artist", artist);
   const albums = artist.relationships.albums.data.map(albumToAlbum);
 
   return {
@@ -368,7 +369,6 @@ async function getPlaylistTracks(request: PlaylistTrackRequest): Promise<Playlis
   
   const result = await musicKit.api.music(`/v1/catalog/{{storefrontId}}/playlists/${request.apiId}`, queryParameters);
   const playlist = result.data.data[0];
-  console.log("playlist", playlist);
   const tracks = playlist.relationships.tracks.data.map(songToTrack);
 
   return {
@@ -377,26 +377,19 @@ async function getPlaylistTracks(request: PlaylistTrackRequest): Promise<Playlis
   };
 }
 
-async function getTopItems(): Promise<SearchAllResult> {
+async function getArtistTopTracks(request: ArtistTopTracksRequest): Promise<ArtistTopTracksResult> {
   if (!musicKit || !musicKit.isAuthorized) {
     throw new Error('Not authorized');
   }
 
-  const queryParameters = { limit: 25 };
-  
-  const [songsResult, albumsResult] = await Promise.all([
-    musicKit.api.music('/v1/me/library/songs', queryParameters),
-    musicKit.api.music('/v1/me/library/albums', queryParameters)
-  ]);
-  
-  const songs = songsResult.data.data;
-  const albums = albumsResult.data.data;
-
-  return {
-    tracks: { items: songs.map(songToTrack) || [] },
-    albums: { items: albums.map(albumToAlbum) || [] },
-    artists: { items: [] }
+  const queryParameters = {
+    views: "top-songs"
   };
+    
+  const result = await musicKit.api.music(`/v1/catalog/{{storefrontId}}/artists/${request.apiId}`, queryParameters);
+  const artist = result.data.data[0];
+  const topSongs = artist.views?.["top-songs"]?.data?.map(songToTrack) || [];
+  return { items: topSongs };
 }
 
 const appleMusicPlayer = new AppleMusicPlayer();
@@ -405,12 +398,12 @@ const setMethods = () => {
   application.onSearchAll = searchAll;
   application.onGetAlbumTracks = getAlbumTracks;
   application.onGetArtistAlbums = getArtistAlbums;
+  application.onGetArtistTopTracks = getArtistTopTracks;
   application.onGetPlaylistTracks = getPlaylistTracks;
   application.onSearchTracks = searchTracks;
   application.onSearchArtists = searchArtists;
   application.onSearchAlbums = searchAlbums;
   application.onGetUserPlaylists = getUserPlaylists;
-  application.onGetTopItems = getTopItems;
   application.onPlay = appleMusicPlayer.play.bind(appleMusicPlayer);
   application.onPause = appleMusicPlayer.pause.bind(appleMusicPlayer);
   application.onResume = appleMusicPlayer.resume.bind(appleMusicPlayer);
