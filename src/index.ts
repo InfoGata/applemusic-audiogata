@@ -152,10 +152,10 @@ class AppleMusicPlayer {
       });
       
       if (song.seekTime) {
-        await musicKit.player.seekToTime(song.seekTime);
+        await musicKit.seekToTime(song.seekTime);
       }
       
-      await musicKit.player.play();
+      await musicKit.play();
     } catch (error) {
       console.error('Error playing track:', error);
     }
@@ -163,25 +163,25 @@ class AppleMusicPlayer {
 
   public async pause() {
     if (musicKit) {
-      musicKit.player.pause();
+      musicKit.pause();
     }
   }
 
   public async resume() {
     if (musicKit) {
-      await musicKit.player.play();
+      await musicKit.play();
     }
   }
 
   public async seek(timeInSeconds: number) {
     if (musicKit) {
-      await musicKit.player.seekToTime(timeInSeconds);
+      await musicKit.seekToTime(timeInSeconds);
     }
   }
 
   public async setVolume(volume: number) {
     if (musicKit) {
-      musicKit.player.volume = volume;
+      (musicKit as any).volume = volume;
     }
   }
 }
@@ -193,7 +193,7 @@ async function searchAll(request: SearchRequest): Promise<SearchAllResult> {
 
   const queryParameters = {
     term: request.query,
-    types: ["songs", "albums", "artists"],
+    types: ["songs", "albums", "artists", "playlists"],
     limit: 25
   };
   
@@ -203,11 +203,13 @@ async function searchAll(request: SearchRequest): Promise<SearchAllResult> {
   const tracks = searchData.songs?.data?.map(songToTrack) || [];
   const albums = searchData.albums?.data?.map(albumToAlbum) || [];
   const artists = searchData.artists?.data?.map(artistToArtist) || [];
+  const playlists = searchData.playlists?.data?.map(playlistToPlaylist) || [];
 
   return {
     tracks: { items: tracks },
     albums: { items: albums },
-    artists: { items: artists }
+    artists: { items: artists },
+    playlists: { items: playlists }
   };
 }
 
@@ -482,7 +484,7 @@ const onUiMessage = async (message: UiMessageType) => {
 application.onUiMessage = onUiMessage;
 
 const changeTheme = (theme: Theme) => {
-  localStorage.setItem("kb-color-mode", theme);
+  localStorage.setItem("vite-ui-theme", theme);
 };
 
 application.onChangeTheme = async (theme: Theme) => {
