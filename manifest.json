@@ -1,5 +1,6 @@
 {
   "id": "apple-music-plugin-id",
+  "alias": "apple-music",
   "name": "Plugin for Apple Music",
   "version": "1.0.0",
   "description": "Play music from Apple Music. Requires Apple Music subscription and authentication",
