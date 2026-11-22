@@ -2,6 +2,8 @@
 
 An AudioGata plugin for Apple Music integration using the Apple MusicKit API.
 
+[Installation Link](https://www.audiogata.com/plugininstall?manifestUrl=https://cdn.jsdelivr.net/gh/InfoGata/applemusic-audiogata@latest/manifest.json)
+
 ## Features
 
 - Search for songs, albums, and artists

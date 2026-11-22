@@ -1,10 +1,11 @@
 {
-  "id": "apple-music-plugin-id",
+  "id": "Hbd-lI8dCRWrpOVWVb_Id",
   "alias": "apple-music",
   "name": "Plugin for Apple Music",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Play music from Apple Music. Requires Apple Music subscription and authentication",
   "script": "dist/index.js",
   "options": "dist/options.html",
-  "homepage": "https://github.com/InfoGata/applemusic-audiogata"
+  "homepage": "https://github.com/InfoGata/applemusic-audiogata",
+  "updateUrl": "https://cdn.jsdelivr.net/gh/InfoGata/applemusic-audiogata@latest/manifest.json"
 }
