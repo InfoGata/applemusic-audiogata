@@ -5,7 +5,7 @@ yarn-debug.log*
 yarn-error.log*
 
 # Build outputs
-dist/
+# dist/ is committed: jsdelivr serves the plugin script from the repo.
 build/
 
 # Environment variables

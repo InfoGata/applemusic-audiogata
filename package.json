@@ -1,6 +1,6 @@
 {
   "name": "applemusic-audiogata",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Apple Music plugin for AudioGata using MusicKit API",
   "author": "",
   "license": "MIT",
